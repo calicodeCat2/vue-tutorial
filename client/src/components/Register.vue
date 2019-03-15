@@ -1,9 +1,11 @@
 <template>
-  <div class="hello">
+  <div>
     <h1>Register</h1>
     <input type="email" name="email" v-model="email" placeholder="email">
     <br>
     <input type="password" name="password" v-model="password" placeholder="password">
+    <br>
+    <div class="error" v-html="error" />
     <br>
     <button @click="register">Register</button>
   </div>
@@ -12,24 +14,23 @@
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
 export default {
-  
   data () {
     return {
-     email: '',
-     password: ''
-    }
-  },
-  watch: {
-    email(value) {
-      console.log("It has changed");
+      email: '',
+      password: '',
+      error: null
     }
   },
   methods: {
-    async register() {
-      await AuthenticationService.register({
-        email: this.email,
-        password: this.password
-      })    
+    async register () {
+      try {
+        await AuthenticationService.register({
+          email: this.email,
+          password: this.password
+        })
+      } catch (error) {
+        this.error = error.response.data.error
+      }
     }
   },
   mounted () {
@@ -42,5 +43,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+  .error {
+    color: red;
+  }
 </style>
